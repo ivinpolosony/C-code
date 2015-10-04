@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+	
 void display(int arr[] ,int size){
 	printf("------DISPLAY ----\n");
 	for (int i = 0; i < size; i++){
@@ -7,13 +7,39 @@ void display(int arr[] ,int size){
 	}
 	printf("\n");
 }
-void quick_sort(){
-	
+void quick_sort_divide(int arr[] ,int start ,int end ){
+	int pivot_index,temp,i,j;
+	if(start<end){
+		pivot_index = start;
+		i = start;
+		j = end;
+		for(;i<j;){
+			for( ;arr[i]<=arr[pivot_index] && i < end; ){
+				i++;
+			}
+			for( ;arr[j]>arr[pivot_index];){
+				j--;
+			}
+			if(i<j){
+				temp = arr[i];
+				arr[i]=arr[j];
+				arr[j] = arr[i];
+			}				
+		}
+			temp = arr[pivot_index];
+			arr[pivot_index] = arr[j];
+			arr[j]=temp;
+			quick_sort_divide(arr,start,pivot_index);
+   			quick_sort_divide(arr,pivot_index + 1 , end );
+	}
 }
+
+
 int main(int argc, char const *argv[]){
 	int arrNum[] = {7,2,8,5,4,1};
     int count = sizeof arrNum / sizeof arrNum[0];
-
+    quick_sort_divide(arrNum, 0 ,sizeof(arrNum)/sizeof(int));
+	display(arrNum,count);
 	return 0;
 
 }
