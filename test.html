@@ -1,0 +1,52 @@
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script>
+
+$(document).ready(function(){
+  
+// Fix this by only editing the contents of the removeDuplicates function
+
+// values - {Array}
+// returns an {Array}
+var removeDuplicates = function(values){
+    // You can only edit below this line
+  var array = [];
+   for (var i=0 , size = values.length-1;i<size;i++){
+   	for (var j=i+1 , size = values.length-1;i<size;i++){
+   		 if(values[i]==values[j]){
+   		 	continue;
+   		 }else{
+   		 	array.push(values[i]);
+   		 }
+   	} 
+   }
+    return array;
+    // You can only edit above this line
+};
+
+
+
+var print = function(values, label){
+    $('body').append('<p><span>' + label + ':</span>' + values.join(', ') + '</p>');
+};
+
+
+
+var values = [0, 1, 1, 2, 3, 5, 0];
+
+print(values, 'Original');
+uniqueValues = removeDuplicates(values);
+print(uniqueValues, 'Without duplicates');
+}); 
+</script>
+</head>
+<style>
+span {
+    float:left;
+    width: 200px;
+    
+    color: #001A52;
+}
+</style>
+<h1>Unique values</h1>
