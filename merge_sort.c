@@ -26,6 +26,8 @@ void merge(int arr[] , int start , int mid , int end ){
 		temp[temp_index] = arr[j];
 	}
 
+   
+
 	for(i = 0; i < temp_index ; i++){
 		arr[i] = temp[i];
 	}

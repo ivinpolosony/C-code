@@ -28,7 +28,9 @@ int main()
         valueline.clear();
     }
 
-
+    vector<vector<double> >::iterator myIterator; 
+    myIterator = valueline.begin();
+    cout << (*myIterator).second();
     for (auto val:values){
     	fout << endl << endl;
     	for (auto v:val){
