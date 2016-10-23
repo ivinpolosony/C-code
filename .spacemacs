@@ -37,10 +37,10 @@ values."
      editorconfig
      themes-megapack
      perspectives
-     ;; better-defaults
+     better-defaults
      ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
+     ;;         shell-default-height 30
+     ;;         shell-default-position 'bottom)
       spell-checking
       version-control
      )
@@ -290,6 +290,9 @@ you should place your code here."
   (global-set-key (kbd "M-n") (kbd "C-u 1 C-v"))
   (global-set-key (kbd "M-p") (kbd "C-u 1 M-v"))
 
+  (global-set-key (kbd "M-<up>") 'move-line-up)
+  (global-set-key (kbd "M-<down>") 'move-line-down)
+
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; ediff                                                                  ;;
@@ -326,6 +329,19 @@ you should place your code here."
   (when overwrite-mode
     (set-cursor-color "red")))
 
+
+
+
+(defun move-line-up ()
+  (interactive)
+  (transpose-lines 1)
+  (forward-line -2))
+
+(defun move-line-down ()
+  (interactive)
+  (forward-line 1)
+  (transpose-lines 1)
+  (forward-line -1))
 
 (defun duplicate-line ()
   "Duplicate current line."
