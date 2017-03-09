@@ -24,7 +24,7 @@
 (require 'setup-cedet)
 (require 'setup-editing)
 
-(set-face-attribute 'default nil :font "Ubuntu Mono" :height 100)
+
 ;;(set-default-font "Ubuntu Mono:pixelsize=17:foundry=DAMA:weight=normal:slant=normal:width=normal:spacing=100:scalable=true")
 
 (setq tab-width 4)
@@ -53,7 +53,10 @@
 ;; Package: smartparens
 (require 'smartparens-config)
 (show-smartparens-global-mode +1)
+(highlight-symbol-mode 1)
 (smartparens-global-mode 1)
+
+
 
 ;; when you press RET, the curly braces automatically
 ;; add another newline
@@ -100,6 +103,20 @@
   (transpose-lines 1)
   (forward-line -1))
 
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+
+;; replace the `completion-at-point' and `complete-symbol' bindings in
+;; irony-mode's buffers by irony-mode's function
+(defun my-irony-mode-hook ()
+  (define-key irony-mode-map [remap completion-at-point]
+    'irony-completion-at-point-async)
+  (define-key irony-mode-map [remap complete-symbol]
+    'irony-completion-at-point-async))
+(add-hook 'irony-mode-hook 'my-irony-mode-hook)
+(add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
+
 
 ;; function-args
 ;; (require 'function-args)
@@ -114,7 +131,7 @@
  '(custom-enabled-themes (quote (monokai)))
  '(custom-safe-themes
    (quote
-    ("a800120841da457aa2f86b98fb9fd8df8ba682cebde033d7dbf8077c1b7d677a" default)))
+    ("c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "a800120841da457aa2f86b98fb9fd8df8ba682cebde033d7dbf8077c1b7d677a" default)))
  '(package-selected-packages
    (quote
     (zygospore helm-gtags helm yasnippet ws-butler volatile-highlights use-package undo-tree iedit dtrt-indent counsel-projectile company clean-aindent-mode anzu))))
