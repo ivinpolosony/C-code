@@ -86,21 +86,16 @@ int main(int argc, char *argv[])
         std::cout << "ERROR reading from socket" << "\n";
         exit(0);
     }
-    char s[100];
-
-    ///////////////////////////////////////////////////////////////////////////
-    //                               gethostbyaddr                           //
-    ///////////////////////////////////////////////////////////////////////////
 
     client_addr_ = gethostbyaddr((const char *) &client_addr.sin_addr.s_addr,sizeof(client_addr.sin_addr.s_addr) , AF_INET);
 
     if(client_addr_ ==NULL){
         std::cout << "ERROR getting hostname" << "\n";
     }
-//    char * client_addr_port = inet_ntoa(client_addr.sin_addr);
+    //    char * client_addr_port = inet_ntoa(client_addr.sin_addr);
     std::cout << "Server established connection with  "  << client_addr_->h_name << inet_ntoa(client_addr.sin_addr) <<"\n";
 
-//   get_in_addr((struct sockaddr *)&client_addr),s.c_str(), sizeof s);
+    //   get_in_addr((struct sockaddr *)&client_addr),s.c_str(), sizeof s);
     std::cout << "Here is the message: "  << client_addr.sin_addr.s_addr<<"\n";
     std::cout << "Here is the message: "  << buffer<<"\n";
 return 0;

@@ -56,7 +56,9 @@
 (highlight-symbol-mode 1)
 (smartparens-global-mode 1)
 
-
+                                        ; .emacs
+(require 'linum)
+(global-linum-mode 1)
 
 ;; when you press RET, the curly braces automatically
 ;; add another newline
