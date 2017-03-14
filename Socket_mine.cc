@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
         exit(0);
     }
 
-    
+
     int backlog= 5;
    /**
    listen() marks the socket referred to by sockfd as a passive socket, that is,
