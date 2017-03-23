@@ -1,11 +1,11 @@
 (require 'package)
 (add-to-list 'package-archives
-         '("melpa" . "http://melpa.org/packages/") t)
+             '("melpa" . "http://melpa.org/packages/") t)
 
 
 (package-initialize)
 (when (not package-archive-contents)
-    (package-refresh-contents))
+  (package-refresh-contents))
 
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
@@ -56,16 +56,36 @@
 (highlight-symbol-mode 1)
 (smartparens-global-mode 1)
 
-                                        ; .emacs
-(require 'linum)
-(global-linum-mode 1)
 
+(add-hook 'c++-mode-hook 'irony-mode)
+(add-hook 'c-mode-hook 'irony-mode)
+(add-hook 'objc-mode-hook 'irony-mode)
+
+;;; use groovy-mode when file ends in .groovy or has #!/bin/groovy at start
+(add-to-list 'load-path "~/.emacs.d/lisp/vendor/groovy-mode")
+(autoload 'groovy-mode "groovy-mode" "Major mode for editing Groovy code." t)
+(add-to-list 'auto-mode-alist '("\.groovy$" . groovy-mode))
+(add-to-list 'auto-mode-alist '("\.gradle$" . groovy-mode))
+(add-to-list 'interpreter-mode-alist '("groovy" . groovy-mode))
+
+;;; make Groovy mode electric by default.
+(add-hook 'groovy-mode-hook
+          '(lambda ()
+             (require 'groovy-electric)
+             (groovy-electric-mode)))
+
+
+(use-package highlight-symbol
+  :ensure t
+  :init
+  (add-hook 'prog-mode-hook 'highlight-symbol-mode))
+(global-linum-mode t)
 ;; when you press RET, the curly braces automatically
 ;; add another newline
 (sp-with-modes '(c-mode c++-mode)
-               (sp-local-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
-               (sp-local-pair "/*" "*/" :post-handlers '((" | " "SPC")
-                                                         ("* ||\n[i]" "RET"))))
+  (sp-local-pair "{" nil :post-handlers '(("||\n[i]" "RET")))
+  (sp-local-pair "/*" "*/" :post-handlers '((" | " "SPC")
+                                            ("* ||\n[i]" "RET"))))
 
 (setq-local imenu-create-index-function #'ggtags-build-imenu-index)
 
@@ -80,9 +100,9 @@
 (require 'multiple-cursors)
 
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-;;(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-;;(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-;;(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 
 
@@ -105,9 +125,6 @@
   (transpose-lines 1)
   (forward-line -1))
 
-(add-hook 'c++-mode-hook 'irony-mode)
-(add-hook 'c-mode-hook 'irony-mode)
-(add-hook 'objc-mode-hook 'irony-mode)
 
 ;; replace the `completion-at-point' and `complete-symbol' bindings in
 ;; irony-mode's buffers by irony-mode's function
