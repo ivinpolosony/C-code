@@ -45,6 +45,26 @@
 
 (global-set-key (kbd "M-<up>") 'move-line-up)
 (global-set-key (kbd "M-<down>") 'move-line-down)
+(global-set-key (kbd "C-c C-c") 'comment-or-uncomment-current-line-or-region)
+
+
+
+(defun comment-or-uncomment-current-line-or-region ()
+  "Comments or uncomments current current line or whole lines in region."
+  (interactive)
+  (save-excursion
+    (let (min max)
+      (if (region-active-p)
+          (setq min (region-beginning) max (region-end))
+        (setq min (point) max (point)))
+      (comment-or-uncomment-region
+       (progn (goto-char min) (line-beginning-position))
+       (progn (goto-char max) (line-end-position))))))
+
+
+
+
+
 
 
 (require 'yasnippet)
@@ -57,6 +77,7 @@
 (smartparens-global-mode 1)
 
                                         ; .emacs
+(auto-highlight-symbol-mode 1)
 (require 'linum)
 (global-linum-mode 1)
 
@@ -73,7 +94,8 @@
 (require 'recentf)
 (recentf-mode 1)
 (setq recentf-max-menu-items 25)
-(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+
+;;(global-set-key "\C-x\ \C-r" 'recentf-open-files) ;;changed for ivy mode which is better
 
 (defalias 'e 'find-file)
 ;;Multiple Cursors
@@ -83,6 +105,23 @@
 ;;(global-set-key (kbd "C->") 'mc/mark-next-like-this)
 ;;(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 ;;(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+
+(ivy-mode 1)
+(setq ivy-use-virtual-buffers t)
+(setq enable-recursive-minibuffers t)
+(global-set-key "\M-s" 'swiper)
+(global-set-key (kbd "C-x C-r") 'ivy-resume)
+(global-set-key (kbd "<f6>") 'ivy-resume)
+(global-set-key (kbd "C-x C-f") 'counsel-find-file)
+(global-set-key (kbd "<f1> l") 'counsel-find-library)
+(global-set-key (kbd "<f2> i") 'counsel-info-lookup-symbol)
+(global-set-key (kbd "<f2> u") 'counsel-unicode-char)
+(global-set-key (kbd "C-c g") 'counsel-git)
+(global-set-key (kbd "C-c j") 'counsel-git-grep)
+(global-set-key (kbd "C-c k") 'counsel-ag)
+(global-set-key (kbd "C-x l") 'counsel-locate)
+(define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
 
 
 
