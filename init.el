@@ -63,8 +63,10 @@
 
 
 
-
-
+  (add-hook 'prog-mode-hook (lambda () (highlight-symbol-mode)))
+  (setq highlight-symbol-on-navigation-p t)
+  (global-set-key [f3] 'highlight-symbol-next)
+  (global-set-key [(shift f3)] 'highlight-symbol-prev)
 
 
 (require 'yasnippet)
