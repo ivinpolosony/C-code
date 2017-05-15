@@ -23,7 +23,9 @@
 ;; (require 'setup-ggtags)
 (require 'setup-cedet)
 (require 'setup-editing)
-
+(which-key-mode)
+;;turn on undo  everywhere
+(global-undo-tree-mode 1)
 
 ;;(set-default-font "Ubuntu Mono:pixelsize=17:foundry=DAMA:weight=normal:slant=normal:width=normal:spacing=100:scalable=true")
 
@@ -83,6 +85,13 @@
 (require 'linum)
 (global-linum-mode 1)
 
+;; auto revert mode
+(global-auto-revert-mode 1)
+
+;; auto refresh dired when file changes
+(add-hook 'dired-mode-hook 'auto-revert-mode)
+
+
 
 (add-hook 'c++-mode-hook 'irony-mode)
 (add-hook 'c-mode-hook 'irony-mode)
@@ -131,12 +140,25 @@
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C-S-<mouse-1>" . mc/add-cursor-on-click)))
 
+;; persistent-scratch
+(use-package persistent-scratch
+  :config
+  (persistent-scratch-setup-default))
+
+;; overwrite selected text
+(delete-selection-mode t)
+
+(add-to-list 'package-archives '("SC" . "http://joseito.republika.pl/sunrise-commander/") t)
 
 (ivy-mode 1)
 (setq ivy-use-virtual-buffers t)
 (setq enable-recursive-minibuffers t)
 (global-set-key "\M-s" 'swiper)
+(setq ivy-display-style 'fancy)
 (global-set-key (kbd "C-x C-r") 'ivy-resume)
 (global-set-key (kbd "<f6>") 'ivy-resume)
 (global-set-key (kbd "C-x C-f") 'counsel-find-file)
