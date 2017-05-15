@@ -49,7 +49,10 @@
 (global-set-key (kbd "M-<down>") 'move-line-down)
 (global-set-key (kbd "C-c C-c") 'comment-or-uncomment-current-line-or-region)
 
-
+;; Go to last change
+(require 'goto-chg)
+(global-set-key (kbd "C-c b ,") 'goto-last-change)
+(global-set-key (kbd "C-c b .") 'goto-last-change-reverse)
 
 (defun comment-or-uncomment-current-line-or-region ()
   "Comments or uncomments current current line or whole lines in region."
@@ -171,6 +174,15 @@
 (global-set-key (kbd "C-x l") 'counsel-locate)
 (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
 
+(defun copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
 
 
 (defun duplicate-line ()
