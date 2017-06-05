@@ -38,6 +38,32 @@
    :ensure t
 )
 
+(use-package jedi
+  :ensure t
+  )
+(use-package magit
+  :ensure t
+  )
+(use-package swiper
+  :ensure t
+  )
+
+(use-package web-mode
+  :ensure t
+  )
+
+
+
+
+
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:complete-on-dot t)
+
+
+
+(add-to-list 'auto-mode-alist '(".*/react/.*\\.js[x]?\\'" . web-mode))
+(setq web-mode-content-types-alist
+  '(("jsx"  . "/.*/react/.*\\.js[x]?\\'")))
 
 (require 'use-package)
 (setq use-package-always-ensure t)
@@ -138,13 +164,6 @@
 
 
 
-;; PACKAGE: anzu
-;; GROUP: Editing -> Matching -> Isearch -> Anzu
-(use-package anzu
-  :init
-  (global-anzu-mode)
-  (global-set-key (kbd "M-%") 'anzu-query-replace)
-  (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp))
 
 
 ;; PACKAGE: iedit
