@@ -1,6 +1,7 @@
 (require 'package)
 (add-to-list 'package-archives
          '("melpa" . "http://melpa.org/packages/") t)
+(set-face-foreground 'minibuffer-prompt "white")
 
 (tool-bar-mode -1)
 (package-initialize)
@@ -37,6 +38,7 @@
 (use-package doom-themes
    :ensure t
 )
+(require 'doom-themes)
 
 (use-package jedi
   :ensure t
@@ -52,9 +54,22 @@
   :ensure t
   )
 
+;; Load the theme (doom-one, doom-dark, etc.)
+(load-theme 'doom-one t)
 
+;;; OPTIONAL
+;; brighter source buffers (that represent files)
+(add-hook 'find-file-hook #'doom-buffer-mode-maybe)
+;; ...if you use auto-revert-mode
+(add-hook 'after-revert-hook #'doom-buffer-mode-maybe)
+;; And you can brighten other buffers (unconditionally) with:
+(add-hook 'ediff-prepare-buffer-hook #'doom-buffer-mode)
 
+;; brighter minibuffer when active
+(add-hook 'minibuffer-setup-hook #'doom-brighten-minibuffer)
 
+;; Enable custom neotree theme
+(doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
 
 (add-hook 'python-mode-hook 'jedi:setup)
 (setq jedi:complete-on-dot t)
@@ -260,7 +275,17 @@ point reaches the beginning or end of the buffer, stop there."
 (setq indent-tabs-mode nil)
 (setq c-default-style "linux"
       c-basic-offset 4)
+
+;; set c-basic-offset to multiple of tab-width for java mode
+;; (this prevents mixing of tabs and spaces in indentation)
+(defun c++-no-tabs-hook ()
+  (setq tab-width 4)
+  (setq indent-tabs-mode nil)
+  (setq c-basic-offset 4))
+(add-hook 'c++-mode-hook 'c++-no-tabs-hook)
+(add-hook 'c-mode-hook 'c++-no-tabs-hook)
 ;; (setq c-basic-offset 4)
+
 (define-key global-map (kbd "C-+") 'text-scale-increase)
 (define-key global-map (kbd "C--") 'text-scale-decrease)
 (setq-default dotspacemacs-configuration-layers
@@ -448,7 +473,7 @@ point reaches the beginning or end of the buffer, stop there."
  '(custom-enabled-themes (quote (doom-molokai)))
  '(custom-safe-themes
    (quote
-    ("e91ca866d6cbb79786e314e0466f4f1b8892b72e77ed702e53bf7565e0dfd469" "227e2c160b0df776257e1411de60a9a181f890cfdf9c1f45535fc83c9b34406b" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "a800120841da457aa2f86b98fb9fd8df8ba682cebde033d7dbf8077c1b7d677a" default)))
+    ("525cf5e455ac1c31b2c32ea4f71954e792dbbeadf5fcb28393167f6e60107294" "63b822ccd7a1928a7cbc88037dddf7b74b2f8a507e1bccd7281f20646f72cd0a" "9f3181dc1fabe5d58bbbda8c48ef7ece59b01bed606cfb868dd147e8b36af97c" "6bde11b304427c7821b72a06a60e8d079b8f7ae10b407d8af37ed5e5d59b1324" "e91ca866d6cbb79786e314e0466f4f1b8892b72e77ed702e53bf7565e0dfd469" "227e2c160b0df776257e1411de60a9a181f890cfdf9c1f45535fc83c9b34406b" "c7a9a68bd07e38620a5508fef62ec079d274475c8f92d75ed0c33c45fbe306bc" "a800120841da457aa2f86b98fb9fd8df8ba682cebde033d7dbf8077c1b7d677a" default)))
  '(fci-rule-color "#5B6268")
  '(jdee-db-active-breakpoint-face-colors (cons "#1B2229" "#51afef"))
  '(jdee-db-requested-breakpoint-face-colors (cons "#1B2229" "#98be65"))
