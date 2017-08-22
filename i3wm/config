@@ -23,11 +23,12 @@ client.focused          $CL_CUR     $CL_CUR     $CL_BG   $CL_CUR     $CL_CUR
 client.focused_inactive $CL_MAGENTA $CL_MAGENTA $CL_BG   $CL_MAGENTA $CL_MAGENTA
 client.unfocused        $CL_BG      $CL_BG      $CL_CUR  $CL_BG      $CL_BG
 client.urgent           $CL_RED     $CL_RED     $CL_BG   $CL_RED     $CL_RED
-client.placeholder      $CL_BG      $CL_BG      $CL_WHITE $CL_BLACK  $CL_BG
+#client.placeholder      $CL_BG      $CL_BG      $CL_WHITE $CL_BLACK  $CL_BG
 
-set $mod Mod4
 #Caps lock as mod key
+
 exec --no-startup-id "/usr/bin/xmodmap ${HOME}/.Xmodmap"# Font for window titles. Will also be used by the bar unless a different font
+set $mod Mod4
 # is used in the bar {} block below.
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
@@ -194,10 +195,10 @@ bindsym $mod+r mode "resize"
 # i3status bar config
 bar {
 	font pango:monospace 8
-	status_command i3status --config ~/.i3/status.conf
-   #     status_command i3blocks
+	# status_command i3status --config ~/.i3/status.conf
+        status_command i3blocks
         position bottom
-        tray_padding 0
+     #   tray_padding 0
 
         colors {
                 background #151617 #012744 #005f87 #0088aa
