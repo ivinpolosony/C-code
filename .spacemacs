@@ -31,48 +31,72 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     go
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
-     ;; <M-m f e R> (Emhttps://bosenjira2.netscout.com:8443/browse/IPI-17966acs st(setq-default dotspacemacs-configuration-layers
+     ;; <M-m f e R> (Emacs style) to install them.
      ;; ----------------------------------------------------------------
      helm
+     pandoc
+     html
      (auto-completion :variables
+                      auto-completion-return-key-behavior 'complete
+                      auto-completion-tab-key-behavior 'cycle
+                      auto-completion-complete-with-key-sequence nil
+                      auto-completion-complete-with-key-sequence-delay 0
+                      auto-completion-enable-snippets-in-popup t
                       auto-completion-enable-help-tooltip t
-                      auto-completion-enable-snippets-in-popup t)
- 
-;; Setting Colours (faces) for todo states to give clearer view of work                     auto-completion-enable-sort-by-usage t)
+                      auto-completion-enable-sort-by-usage t
+                      auto-completion-private-snippets-directory t
+                      )
      better-defaults
+     docker
      emacs-lisp
      (git :variables
-             git-magit-status-fullscreen t
-             git-enable-github-support t
-             git-gutter-use-fringe t)
-     github
-     markdown
-     colors
-     org
-     emacs-lisp
-     markdown
-     html
+          git-gutter-use-fringe t)
+     (c-c++
+      :variables
+      c-c++-enable-clang-support t
+      )
+     better-defaults
+     (spell-checking :variables enable-flyspell-auto-completion t)
+     (colors :variables
+             colors-enable-rainbow-identifiers nil
+             colors-enable-nyan-cat-progress-bar t)
      syntax-checking
-     (c-c++ :variables c-c++-enable-clang-support t)
+     (spacemacs-layouts :variables layouts-enable-autosave t)
+     python
+     go
+     gtags 
+     emoji
+     shell
+     markdown
+     (org :variables
+               org-enable-bootstrap-support t
+               org-enable-reveal-js-support t
+               org-enable-github-support t)
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
      spell-checking
      syntax-checking
-     version-control
+     (version-control
+      :variables
+      version-control-diff-tool
+      'git-gutter version-control-global-margin t)
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
-                                      key-chord
-                                      swiper
-                                      groovy-mode
+                                      all-the-icons
+                                      base16-theme
+                                      monokai-theme
+                                      yasnippet-snippets
+                                      quickrun
+                                      ox-pandoc
+                                      smooth-scrolling
                                       )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -136,7 +160,7 @@ values."
    ;; `recents' `bookmarks' `projects' `agenda' `todos'."
    ;; List sizes may be nil, in which case
    ;; `spacemacs-buffer-startup-lists-length' takes effect.
-   dotspacemacs-startup-lists '((recents . 9)
+   dotspacemacs-startup-lists '((recents . 5)
                                 (projects . 7))
    ;; True if the home buffer should respond to resize events.
    dotspacemacs-startup-buffer-responsive t
@@ -152,7 +176,7 @@ values."
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
    dotspacemacs-default-font '("Source Code Pro"
-                               :size 11
+                               :size 13
                                :weight normal
                                :width normal
                                :powerline-scale 1.1)
@@ -227,7 +251,7 @@ values."
    dotspacemacs-enable-paste-transient-state nil
    ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
-   dotspacemacs-which-key-delay 0.4
+   dotspacemacs-which-key-delay 0.8
    ;; Which-key frame position. Possible values are `right', `bottom' and
    ;; `right-then-bottom'. right-then-bottom tries to display the frame to the
    ;; right; if there is insufficient space it displays it at the bottom.
@@ -278,16 +302,7 @@ values."
    ;;                       text-mode
    ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers '(:relative t
-                               :disabled-for-modes dired-mode
-                                                   doc-view-mode
-                                                   markdown-mode
-                                                   org-mode
-                                                   pdf-view-mode
-                                                   text-mode
-                                                   :size-limit-kb 1000)
-
-
+   dotspacemacs-line-numbers t
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
    dotspacemacs-folding-method 'evil
@@ -322,38 +337,62 @@ values."
    ))
 
 (defun dotspacemacs/user-init ()
+
+
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init', before layer configuration
 executes.
  This function is mostly useful for variables that need to be set
 before packages are loaded. If you are unsure, you should try in setting them in
- `dotspacemacs/user-config' first."
+`dotspacemacs/user-config' first."
   )
 
 (defun dotspacemacs/user-config ()
+  (menu-bar-mode 1)
+  
+  ;; big undo
+  undo-limit (* 10 1000 1000)                    ; 10MB per file
+  undo-strong-limit (* 100 1000 1000)            ; 100MB ma
+
+
+   ;; Persistent undo
+   undo-tree-auto-save-history t
+   undo-tree-history-directory-alist
+   `(("." . ,(concat spacemacs-cache-directory "undo")))
+
+   ;; scroll margin 3 lines without jumping
+   scroll-margin 3
+   scroll-conservatively 10000
+   scroll-step 1
+  
+  (global-set-key (kbd "<f8>") 'quickrun)
+ ;;; BEGIN: Mouse Support
+  (global-set-key (kbd "<C-s-mouse-4>") (lambda () (interactive)
+                                          (spacemacs/zoom-frm-in)
+                                          (spacemacs//zoom-frm-powerline-reset)))
+  (global-set-key (kbd "<C-s-mouse-5>") (lambda () (interactive)
+                                          (spacemacs/zoom-frm-out)
+                                          (spacemacs//zoom-frm-powerline-reset)))
+  (global-set-key (kbd "<C-mouse-4>") 'text-scale-increase)
+  (global-set-key (kbd "<C-mouse-5>") 'text-scale-decrease)
+  ;;; END: Mouse Support
+
+  ; Both needed because  is overwritten by default in normal state
+  (define-key evil-motion-state-map (kbd "J") 'evil-scroll-line-up)
+  (define-key evil-normal-state-map (kbd "J") 'evil-scroll-line-up)
+  (define-key evil-motion-state-map (kbd "K") 'evil-scroll-line-down)
+  (define-key evil-normal-state-map (kbd "K") 'evil-scroll-line-down)
+
+  (setq-default evil-scroll-line-count 3)
+
+                                        ; Allow cursor to go to top/bottom of screen
+  (setq-default smooth-scroll-margin 1)
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
 layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  (setq-default dotspacemacs-configuration-layers
-  '((c-c++ :variables c-c++-enable-clang-support t)))
-
-  (setq-default dotspacemacs-configuration-layers
-                '((auto-completion :variables
-                                   auto-completion-enable-snippets-in-popup t)))
-
-  (setq-default dotspacemacs-configuration-layers
-  '((auto-completion :variables
-                     auto-completion-enable-help-tooltip t)))
-
-  (global-company-mode)
-  (require 'key-chord)
-  (key-chord-mode 1)
-  (key-chord-define evil-insert-state-map  "jk" 'evil-normal-state)
-
-
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -365,10 +404,10 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
+    ("12b204c8fcce23885ce58e1031a137c5a14461c6c7e1db81998222f8908006af" default)))
  '(package-selected-packages
    (quote
-    (groovy-mode helm-gtags ggtags swiper ivy key-chord typing-game magit-gh-pulls github-search github-clone github-browse-file gist gh marshal logito pcache ht company-quickhelp xterm-color shell-pop multi-term eshell-z eshell-prompt-extras esh-help zonokai-theme zenburn-theme zen-and-art-theme ws-butler winum which-key web-mode volatile-highlights vi-tilde-fringe uuidgen use-package unfill underwater-theme ujelly-theme twilight-theme twilight-bright-theme twilight-anti-bright-theme tronesque-theme toxi-theme toc-org tao-theme tangotango-theme tango-plus-theme tango-2-theme tagedit sunny-day-theme sublime-themes subatomic256-theme subatomic-theme spaceline spacegray-theme soothe-theme solarized-theme soft-stone-theme soft-morning-theme soft-charcoal-theme smyx-theme smeargle slim-mode seti-theme scss-mode sass-mode reverse-theme restart-emacs rainbow-mode rainbow-identifiers rainbow-delimiters railscasts-theme purple-haze-theme pug-mode professional-theme popwin planet-theme phoenix-dark-pink-theme phoenix-dark-mono-theme persp-mode pcre2el pastels-on-dark-theme paradox orgit organic-green-theme org-projectile org-present org-pomodoro org-download org-bullets open-junk-file omtose-phellack-theme oldlace-theme occidental-theme obsidian-theme noctilux-theme neotree naquadah-theme mwim mustang-theme move-text monokai-theme molokai-theme moe-theme mmm-mode minimal-theme material-theme markdown-toc majapahit-theme magit-gitflow madhat2r-theme macrostep lush-theme lorem-ipsum linum-relative link-hint light-soap-theme less-css-mode jbeans-theme jazz-theme ir-black-theme inkpot-theme info+ indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt heroku-theme hemisu-theme help-fns+ helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-css-scss helm-company helm-c-yasnippet helm-ag hc-zenburn-theme gruvbox-theme gruber-darker-theme grandshell-theme gotham-theme google-translate golden-ratio go-guru go-eldoc gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ gh-md gandalf-theme fuzzy flyspell-correct-helm flycheck-pos-tip flx-ido flatui-theme flatland-theme fill-column-indicator farmhouse-theme fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu espresso-theme emmet-mode elisp-slime-nav dumb-jump dracula-theme django-theme disaster diff-hl define-word darktooth-theme darkokai-theme darkmine-theme darkburn-theme dakrone-theme cyberpunk-theme company-web company-statistics company-go company-c-headers column-enforce-mode color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized color-identifiers-mode cmake-mode clues-theme clean-aindent-mode clang-format cherry-blossom-theme busybee-theme bubbleberry-theme birds-of-paradise-plus-theme badwolf-theme auto-yasnippet auto-highlight-symbol auto-dictionary auto-compile apropospriate-theme anti-zenburn-theme ample-zen-theme ample-theme alect-themes aggressive-indent afternoon-theme adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
+    (ox-twbs ox-reveal ox-gfm dockerfile-mode docker json-mode tablist docker-tramp json-snatcher json-reformat pandoc-mode ox-pandoc ht emoji-cheat-sheet-plus company-emoji yasnippet-snippets quickrun monokai-theme base16-theme all-the-icons memoize helm-gtags ggtags company-quickhelp rainbow-mode rainbow-identifiers flyspell-popup color-identifiers-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc helm-company cython-mode company-statistics company-go company-c-headers company-anaconda anaconda-mode pythonic xterm-color unfill smeargle shell-pop orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download mwim multi-term mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore helm-c-yasnippet go-guru go-eldoc go-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub with-editor eshell-z eshell-prompt-extras esh-help disaster diff-hl company cmake-mode clang-format auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
