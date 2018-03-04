@@ -143,7 +143,7 @@ values."
    ;; with `:variables' keyword (similar to layers). Check the editing styles
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
-   dotspacemacs-editing-style 'vim
+   dotspacemacs-editing-style 'hybrid
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
    ;; Specify the startup banner. Default value is `official', it displays
@@ -174,7 +174,7 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
+   dotspacemacs-default-font '("Hack"
                                :size 13
                                :weight normal
                                :width normal
@@ -386,6 +386,8 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (define-key evil-motion-state-map (kbd "K") 'evil-scroll-line-down)
   (define-key evil-normal-state-map (kbd "K") 'evil-scroll-line-down)
    
+  (define-key evil-motion-state-map (kbd "C-<tab>") 'evil-window-next)
+  (define-key evil-normal-state-map (kbd "C-<tab>") 'evil-window-next)
   (setq-default evil-scroll-line-count 3)
 
                                         ; Allow cursor to go to top/bottom of screen
@@ -407,7 +409,7 @@ you should place your code here."
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("34ed3e2fa4a1cb2ce7400c7f1a6c8f12931d8021435bad841fdc1192bd1cc7da" "b3bcf1b12ef2a7606c7697d71b934ca0bdd495d52f901e73ce008c4c9825a3aa" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "12b204c8fcce23885ce58e1031a137c5a14461c6c7e1db81998222f8908006af" default)))
+    ("c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "350dc341799fbbb81e59d1e6fff2b2c8772d7000e352a5c070aa4317127eee94" "196df8815910c1a3422b5f7c1f45a72edfa851f6a1d672b7b727d9551bb7c7ba" "a62f0662e6aa7b05d0b4493a8e245ab31492765561b08192df61c9d1c7e1ddee" "ec3e6185729e1a22d4af9163a689643b168e1597f114e1cec31bdb1ab05aa539" "732ccca2e9170bcfd4ee5070159923f0c811e52b019106b1fc5eaa043dff4030" "b67b2279fa90e4098aa126d8356931c7a76921001ddff0a8d4a0541080dee5f6" "cabc32838ccceea97404f6fcb7ce791c6e38491fd19baa0fcfb336dcc5f6e23c" "dd4628d6c2d1f84ad7908c859797b24cc6239dfe7d71b3363ccdd2b88963f336" "34ed3e2fa4a1cb2ce7400c7f1a6c8f12931d8021435bad841fdc1192bd1cc7da" "b3bcf1b12ef2a7606c7697d71b934ca0bdd495d52f901e73ce008c4c9825a3aa" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "12b204c8fcce23885ce58e1031a137c5a14461c6c7e1db81998222f8908006af" default)))
  '(evil-want-Y-yank-to-eol nil)
  '(global-ede-mode t)
  '(package-selected-packages
