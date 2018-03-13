@@ -369,6 +369,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
     (kbd "M-d") 'spacemacs/delete-window)
 
   (global-set-key (kbd "<f8>") 'quickrun)
+  (global-set-key (kbd "M-r") 'quickrun)
  ;;; BEGIN: Mouse Support
   (global-set-key (kbd "<C-s-mouse-4>") (lambda () (interactive)
                                           (spacemacs/zoom-frm-in)
@@ -385,12 +386,40 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (define-key evil-normal-state-map (kbd "J") 'evil-scroll-line-up)
   (define-key evil-motion-state-map (kbd "K") 'evil-scroll-line-down)
   (define-key evil-normal-state-map (kbd "K") 'evil-scroll-line-down)
-   
-  (define-key evil-motion-state-map (kbd "C-<tab>") 'evil-window-next)
-  (define-key evil-normal-state-map (kbd "C-<tab>") 'evil-window-next)
   (setq-default evil-scroll-line-count 3)
 
-                                        ; Allow cursor to go to top/bottom of screen
+  (define-key evil-motion-state-map (kbd "C-<tab>") 'evil-window-next)
+  (define-key evil-normal-state-map (kbd "C-<tab>") 'evil-window-next)
+
+  (define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)
+  (define-key evil-normal-state-map (kbd "<C-f12>") 'imenu)
+  (define-key evil-normal-state-map (kbd "<s-f6>") 'iedit-mode)
+  (define-key evil-motion-state-map (kbd "<s-f6>") 'iedit-mode)
+
+
+
+;; select and C-n for multi cursor ;; g r u for undo cursor 
+  (use-package evil-mc
+    :ensure t
+    :config
+    (global-evil-mc-mode  1)
+
+    (defun evil--mc-make-cursor-at-col (startcol _endcol orig-line)
+      (move-to-column startcol)
+      (unless (= (line-number-at-pos) orig-line)
+        (evil-mc-make-cursor-here)))
+    (defun evil-mc-make-vertical-cursors (beg end)
+      (interactive (list (region-beginning) (region-end)))
+      (evil-mc-pause-cursors)
+      (apply-on-rectangle #'evil--mc-make-cursor-at-col
+                          beg end (line-number-at-pos (point)))
+      (evil-mc-resume-cursors)
+      (evil-normal-state)
+      (move-to-column (evil-mc-column-number (if (> end beg)
+                                                 beg
+                                               end)))))  
+
+  ;Allow cursor to go to top/bottom of screen
   (setq-default smooth-scroll-margin 1)
   "Configuration function for user code.
 This function is called at the very end of Spacemacs initialization after
