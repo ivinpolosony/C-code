@@ -10,3 +10,5 @@ int fibonacci(int i, int[] memo) {
   }
  return memo[i];
 }
+// this can be done by just doing 
+//res = a+b
