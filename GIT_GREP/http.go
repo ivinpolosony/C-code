@@ -12,6 +12,8 @@ import (
 	"os"
 )
 
+//#TODO Boyer–Moore string search algorithm
+
 type json_response struct {
 	records []record
 }
