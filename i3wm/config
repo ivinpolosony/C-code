@@ -58,7 +58,8 @@ bindsym $mod+Shift+q kill
 for_window [class="^Spotify$"] border none
 for_window [class="^Spotify Premium$"] border none
 
-
+#mouse focus on window
+focus_follows_mouse no
 
 # lock screen
 #bindsym $mod+l exec i3lock -c 111111
