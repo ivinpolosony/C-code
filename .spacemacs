@@ -31,6 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
+     csv
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
@@ -388,6 +389,9 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (define-key evil-normal-state-map (kbd "K") 'evil-scroll-line-down)
   (setq-default evil-scroll-line-count 3)
 
+
+  (setq auto-save-file-name-transforms
+        `((".*" "~/.emacs-saves/" t)))
   (define-key evil-motion-state-map (kbd "C-<tab>") 'evil-window-next)
   (define-key evil-normal-state-map (kbd "C-<tab>") 'evil-window-next)
 
@@ -396,7 +400,8 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (define-key evil-normal-state-map (kbd "<s-f6>") 'iedit-mode)
   (define-key evil-motion-state-map (kbd "<s-f6>") 'iedit-mode)
 
-
+  (global-unset-key (kbd "M-<down-mouse-1>"))
+  (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click)
 
 ;; select and C-n for multi cursor ;; g r u for undo cursor 
   (use-package evil-mc
