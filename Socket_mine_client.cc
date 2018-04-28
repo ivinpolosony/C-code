@@ -7,7 +7,6 @@
 
 #include <string.h>
 
-
 #define PORT_NO 1234
 #define HOST "localhost"
 
