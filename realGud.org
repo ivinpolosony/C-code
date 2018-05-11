@@ -1,0 +1,2 @@
+* Make sure .cc file is compiled with flag -ggdb flag
+* No issues with ppdb  
