@@ -67,7 +67,7 @@ values."
      (spacemacs-layouts :variables layouts-enable-autosave t)
      python
      go
-     gtags 
+     ;; gtags 
      emoji
      shell
      markdown
@@ -90,6 +90,7 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
+                                      realgud
                                       all-the-icons
                                       base16-theme
                                       monokai-theme
@@ -169,7 +170,9 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(spacemacs-dark
+   dotspacemacs-themes '(
+                         monokai
+                         spacemacs-dark
                          spacemacs-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
@@ -404,26 +407,27 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click)
 
 ;; select and C-n for multi cursor ;; g r u for undo cursor 
-  (use-package evil-mc
-    :ensure t
-    :config
-    (global-evil-mc-mode  1)
+  ;; (use-package evil-mc
+  ;;   :ensure t
+  ;;   :config
+  ;;   (global-evil-mc-mode  1)
 
-    (defun evil--mc-make-cursor-at-col (startcol _endcol orig-line)
-      (move-to-column startcol)
-      (unless (= (line-number-at-pos) orig-line)
-        (evil-mc-make-cursor-here)))
-    (defun evil-mc-make-vertical-cursors (beg end)
-      (interactive (list (region-beginning) (region-end)))
-      (evil-mc-pause-cursors)
-      (apply-on-rectangle #'evil--mc-make-cursor-at-col
-                          beg end (line-number-at-pos (point)))
-      (evil-mc-resume-cursors)
-      (evil-normal-state)
-      (move-to-column (evil-mc-column-number (if (> end beg)
-                                                 beg
-                                               end)))))  
+  ;;   (defun evil--mc-make-cursor-at-col (startcol _endcol orig-line)
+  ;;     (move-to-column startcol)
+  ;;     (unless (= (line-number-at-pos) orig-line)
+  ;;       (evil-mc-make-cursor-here)))
+  ;;   (defun evil-mc-make-vertical-cursors (beg end)
+  ;;     (interactive (list (region-beginning) (region-end)))
+  ;;     (evil-mc-pause-cursors)
+  ;;     (apply-on-rectangle #'evil--mc-make-cursor-at-col
+  ;;                         beg end (line-number-at-pos (point)))
+  ;;     (evil-mc-resume-cursors)
+  ;;     (evil-normal-state)
+  ;;     (move-to-column (evil-mc-column-number (if (> end beg)
+  ;;                                                beg
+  ;;                                              end)))))  
 
+  (define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)
   ;Allow cursor to go to top/bottom of screen
   (setq-default smooth-scroll-margin 1)
   "Configuration function for user code.
@@ -448,7 +452,7 @@ you should place your code here."
  '(global-ede-mode t)
  '(package-selected-packages
    (quote
-    (csv-mode ox-twbs ox-reveal ox-gfm dockerfile-mode docker json-mode tablist docker-tramp json-snatcher json-reformat pandoc-mode ox-pandoc ht emoji-cheat-sheet-plus company-emoji yasnippet-snippets quickrun monokai-theme base16-theme all-the-icons memoize helm-gtags ggtags company-quickhelp rainbow-mode rainbow-identifiers flyspell-popup color-identifiers-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc helm-company cython-mode company-statistics company-go company-c-headers company-anaconda anaconda-mode pythonic xterm-color unfill smeargle shell-pop orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download mwim multi-term mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore helm-c-yasnippet go-guru go-eldoc go-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub with-editor eshell-z eshell-prompt-extras esh-help disaster diff-hl company cmake-mode clang-format auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
+    (realgud csv-mode ox-twbs ox-reveal ox-gfm dockerfile-mode docker json-mode tablist docker-tramp json-snatcher json-reformat pandoc-mode ox-pandoc ht emoji-cheat-sheet-plus company-emoji yasnippet-snippets quickrun monokai-theme base16-theme all-the-icons memoize helm-gtags ggtags company-quickhelp rainbow-mode rainbow-identifiers flyspell-popup color-identifiers-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc helm-company cython-mode company-statistics company-go company-c-headers company-anaconda anaconda-mode pythonic xterm-color unfill smeargle shell-pop orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download mwim multi-term mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore helm-c-yasnippet go-guru go-eldoc go-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub with-editor eshell-z eshell-prompt-extras esh-help disaster diff-hl company cmake-mode clang-format auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
