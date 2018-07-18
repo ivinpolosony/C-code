@@ -414,16 +414,71 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   (global-unset-key (kbd "M-<down-mouse-1>"))
   (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click)
+  
+;; Moving text
+(use-package move-text
+  :defer t :ensure t
+  :bind (([C-S-up] . move-text-up)
+         ([C-S-down] . move-text-down)))
+;; List identifiers through a right click
+(use-package imenu
+  :defer t
+  :bind ("<C-S-mouse-1>" . imenu))
+
+(use-package multiple-cursors
+  :ensure t
+  :bind (("M-S-<up>" . mc/mark-previous-like-this)
+         ("M-S-<down>" . mc/mark-next-like-this)
+         ;; ("M-<up>" . mc/skip-to-previous-like-this)
+         ;; ("M-<down>" . mc/skip-to-next-like-this)
+         ("C-;" . mc/mark-all-like-this)
+         ("M-S-<mouse-1>" . mc/add-cursor-on-click)
+         ("M-S-<mouse-2>" . mc/add-cursor-on-click)
+         ("M-S-<mouse-3>" . mc/add-cursor-on-click)))
+
+(use-package tabbar-ruler
+  :defer t
+  :ensure t
+  :bind (([C-tab] . tabbar-forward-tab)
+         ([C-S-iso-lefttab] . tabbar-backward-tab)
+         ([C-f4] . kill-current-buffer)
+         ("C-S-t T" . tabbar-mode))
+  :init
+  (progn
+    (setq tabbar-ruler-global-tabbar t)
+    (require 'tabbar-ruler)
+    (with-eval-after-load 'org
+      (progn
+        (define-key org-mode-map [C-tab] 'tabbar-forward-tab)
+        (define-key org-mode-map [C-S-tab] 'tabbar-backward-tab)
+        (define-key org-mode-map [C-S-iso-lefttab] 'tabbar-backward-tab)
+        (define-key org-mode-map [C-f4] 'kill-current-buffer)))
+    (with-eval-after-load 'magit
+      (progn
+        (define-key magit-mode-map [C-tab] 'tabbar-forward-tab)
+        (define-key magit-mode-map [C-S-tab] 'tabbar-backward-tab)
+        (define-key magit-mode-map [C-S-iso-lefttab] 'tabbar-backward-tab)
+        (define-key magit-mode-map [C-f4] 'kill-current-buffer))))
+  :config
+  (progn
+    (tabbar-ruler-group-by-projectile-project)
+    (custom-set-faces
+     '(tabbar-button ((t (:inherit default :box nil :height 104 :width normal :family "Sans Serif"))))
+     '(tabbar-highlight ((t nil)))
+     '(tabbar-selected ((t (:inherit default :stipple nil :weight normal :height 120 :width normal))))
+     '(tabbar-selected-modified ((t (:inherit tabbar-default :background "#272822" :foreground "tomato" :box nil :height 120 :family "Sans Serif"))))
+     '(tabbar-unselected ((t (:inherit tabbar-selected :background "#444" :foreground "#aaa" :height 160))))
+     '(tabbar-unselected-modified ((t (:inherit tabbar-selected-modified :background "#444")))))))
 
 ;; select and C-n for multi cursor ;; g r u for undo cursor 
   ;; (use-package evil-mc
   ;;   :ensure t
   ;;   :config
+  ;;     (unless (= (line-number-at-pos) orig-line)
   ;;   (global-evil-mc-mode  1)
-
   ;;   (defun evil--mc-make-cursor-at-col (startcol _endcol orig-line)
   ;;     (move-to-column startcol)
-  ;;     (unless (= (line-number-at-pos) orig-line)
+
   ;;       (evil-mc-make-cursor-here)))
   ;;   (defun evil-mc-make-vertical-cursors (beg end)
   ;;     (interactive (list (region-beginning) (region-end)))
@@ -457,7 +512,7 @@ you should place your code here."
  '(compilation-message-face (quote default))
  '(custom-safe-themes
    (quote
-    ("fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "446cc97923e30dec43f10573ac085e384975d8a0c55159464ea6ef001f4a16ba" "c3d4af771cbe0501d5a865656802788a9a0ff9cf10a7df704ec8b8ef69017c68" "87d46d0ad89557c616d04bef34afd191234992c4eb955ff3c60c6aa3afc2e5cc" "7a2ac0611ded83cdd60fc4de55ba57d36600eae261f55a551b380606345ee922" "a61109d38200252de49997a49d84045c726fa8d0f4dd637fce0b8affaa5c8620" "c614d2423075491e6b7f38a4b7ea1c68f31764b9b815e35c9741e9490119efc0" "760ce657e710a77bcf6df51d97e51aae2ee7db1fba21bbad07aab0fa0f42f834" "36746ad57649893434c443567cb3831828df33232a7790d232df6f5908263692" "808b47c5c5583b5e439d8532da736b5e6b0552f6e89f8dafaab5631aace601dd" "4bf5c18667c48f2979ead0f0bdaaa12c2b52014a6abaa38558a207a65caeb8ad" "aea30125ef2e48831f46695418677b9d676c3babf43959c8e978c0ad672a7329" "c9f102cf31165896631747fd20a0ca0b9c64ecae019ce5c2786713a5b7d6315e" "ef04dd1e33f7cbd5aa3187981b18652b8d5ac9e680997b45dc5d00443e6a46e3" "25c242b3c808f38b0389879b9cba325fb1fa81a0a5e61ac7cae8da9a32e2811b" "f0c98535db38af17e81e491a77251e198241346306a90c25eb982b57e687d7c0" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "350dc341799fbbb81e59d1e6fff2b2c8772d7000e352a5c070aa4317127eee94" "196df8815910c1a3422b5f7c1f45a72edfa851f6a1d672b7b727d9551bb7c7ba" "a62f0662e6aa7b05d0b4493a8e245ab31492765561b08192df61c9d1c7e1ddee" "ec3e6185729e1a22d4af9163a689643b168e1597f114e1cec31bdb1ab05aa539" "732ccca2e9170bcfd4ee5070159923f0c811e52b019106b1fc5eaa043dff4030" "b67b2279fa90e4098aa126d8356931c7a76921001ddff0a8d4a0541080dee5f6" "cabc32838ccceea97404f6fcb7ce791c6e38491fd19baa0fcfb336dcc5f6e23c" "dd4628d6c2d1f84ad7908c859797b24cc6239dfe7d71b3363ccdd2b88963f336" "34ed3e2fa4a1cb2ce7400c7f1a6c8f12931d8021435bad841fdc1192bd1cc7da" "b3bcf1b12ef2a7606c7697d71b934ca0bdd495d52f901e73ce008c4c9825a3aa" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "12b204c8fcce23885ce58e1031a137c5a14461c6c7e1db81998222f8908006af" default)))
+    ("9a155066ec746201156bb39f7518c1828a73d67742e11271e4f24b7b178c4710" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "446cc97923e30dec43f10573ac085e384975d8a0c55159464ea6ef001f4a16ba" "c3d4af771cbe0501d5a865656802788a9a0ff9cf10a7df704ec8b8ef69017c68" "87d46d0ad89557c616d04bef34afd191234992c4eb955ff3c60c6aa3afc2e5cc" "7a2ac0611ded83cdd60fc4de55ba57d36600eae261f55a551b380606345ee922" "a61109d38200252de49997a49d84045c726fa8d0f4dd637fce0b8affaa5c8620" "c614d2423075491e6b7f38a4b7ea1c68f31764b9b815e35c9741e9490119efc0" "760ce657e710a77bcf6df51d97e51aae2ee7db1fba21bbad07aab0fa0f42f834" "36746ad57649893434c443567cb3831828df33232a7790d232df6f5908263692" "808b47c5c5583b5e439d8532da736b5e6b0552f6e89f8dafaab5631aace601dd" "4bf5c18667c48f2979ead0f0bdaaa12c2b52014a6abaa38558a207a65caeb8ad" "aea30125ef2e48831f46695418677b9d676c3babf43959c8e978c0ad672a7329" "c9f102cf31165896631747fd20a0ca0b9c64ecae019ce5c2786713a5b7d6315e" "ef04dd1e33f7cbd5aa3187981b18652b8d5ac9e680997b45dc5d00443e6a46e3" "25c242b3c808f38b0389879b9cba325fb1fa81a0a5e61ac7cae8da9a32e2811b" "f0c98535db38af17e81e491a77251e198241346306a90c25eb982b57e687d7c0" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "350dc341799fbbb81e59d1e6fff2b2c8772d7000e352a5c070aa4317127eee94" "196df8815910c1a3422b5f7c1f45a72edfa851f6a1d672b7b727d9551bb7c7ba" "a62f0662e6aa7b05d0b4493a8e245ab31492765561b08192df61c9d1c7e1ddee" "ec3e6185729e1a22d4af9163a689643b168e1597f114e1cec31bdb1ab05aa539" "732ccca2e9170bcfd4ee5070159923f0c811e52b019106b1fc5eaa043dff4030" "b67b2279fa90e4098aa126d8356931c7a76921001ddff0a8d4a0541080dee5f6" "cabc32838ccceea97404f6fcb7ce791c6e38491fd19baa0fcfb336dcc5f6e23c" "dd4628d6c2d1f84ad7908c859797b24cc6239dfe7d71b3363ccdd2b88963f336" "34ed3e2fa4a1cb2ce7400c7f1a6c8f12931d8021435bad841fdc1192bd1cc7da" "b3bcf1b12ef2a7606c7697d71b934ca0bdd495d52f901e73ce008c4c9825a3aa" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "12b204c8fcce23885ce58e1031a137c5a14461c6c7e1db81998222f8908006af" default)))
  '(evil-want-Y-yank-to-eol nil)
  '(fci-rule-color "#3C3D37" t)
  '(global-ede-mode t)
@@ -475,7 +530,7 @@ you should place your code here."
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
    (quote
-    (elmacro all-the-icons-dired go-tag go kubernetes-evil side-notes nerdtab go-dlv realgud csv-mode ox-twbs ox-reveal ox-gfm dockerfile-mode docker json-mode tablist docker-tramp json-snatcher json-reformat pandoc-mode ox-pandoc ht emoji-cheat-sheet-plus company-emoji yasnippet-snippets quickrun monokai-theme base16-theme all-the-icons memoize helm-gtags ggtags company-quickhelp rainbow-mode rainbow-identifiers flyspell-popup color-identifiers-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc helm-company cython-mode company-statistics company-go company-c-headers company-anaconda anaconda-mode pythonic xterm-color unfill smeargle shell-pop orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download mwim multi-term mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore helm-c-yasnippet go-guru go-eldoc go-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub with-editor eshell-z eshell-prompt-extras esh-help disaster diff-hl company cmake-mode clang-format auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
+    (tabbar-ruler multiple-cursors leuven-theme back-button zoom typing-game powerline test-simple loc-changes load-relative spinner hydra parent-mode projectile pkg-info epl flx let-alist smartparens iedit anzu evil goto-chg undo-tree highlight bind-map bind-key packed f dash s helm avy helm-core async popup elmacro all-the-icons-dired go-tag go kubernetes-evil side-notes nerdtab go-dlv realgud csv-mode ox-twbs ox-reveal ox-gfm dockerfile-mode docker json-mode tablist docker-tramp json-snatcher json-reformat pandoc-mode ox-pandoc ht emoji-cheat-sheet-plus company-emoji yasnippet-snippets quickrun monokai-theme base16-theme all-the-icons memoize helm-gtags ggtags company-quickhelp rainbow-mode rainbow-identifiers flyspell-popup color-identifiers-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc helm-company cython-mode company-statistics company-go company-c-headers company-anaconda anaconda-mode pythonic xterm-color unfill smeargle shell-pop orgit org-category-capture org-present org-pomo doro alert log4e gntp org-mime org-download mwim multi-term mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore helm-c-yasnippet go-guru go-eldoc go-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub with-editor eshell-z eshell-prompt-extras esh-help disaster diff-hl company cmake-mode clang-format auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
  '(pos-tip-background-color "#FFFACE")
  '(pos-tip-foreground-color "#272822")
  '(vc-annotate-background nil)
