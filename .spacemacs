@@ -90,6 +90,11 @@ values."
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
+                                      flymake-go
+                                      go-gen-test
+                                      go-dlv
+                                      go-gen-test
+                                      godoctor
                                       all-the-icons 
                                       all-the-icons-dired
                                       realgud
@@ -150,20 +155,8 @@ values."
    dotspacemacs-editing-style 'hybrid
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading nil
-   ;; Specify the startup banner. Default value is `official', it displays
-   ;; the official spacemacs logo. An integer value is the index of text
-   ;; banner, `random' chooses a random text banner in `core/banners'
-   ;; directory. A string value must be a path to an image format supported
-   ;; by your Emacs build.
-   ;; If the value is nil then no banner is displayed. (default 'official)
-   dotspacemacs-startup-banner 'nil
-   ;; List of items to show in startup buffer or an association list of
-   ;; the form `(list-type . list-size)`. If nil then it is disabled.
-   ;; Possible values for list-type are:
-   ;; `recents' `bookmarks' `projects' `agenda' `todos'."
-   ;; List sizes may be nil, in which case
-   ;; `spacemacs-buffer-startup-lists-length' takes effect.
-   dotspacemacs-startup-lists '((recents . 5)
+   dotspacemacs-startup-banner 'random
+   dotspacemacs-startup-lists '((recents . 50)
                                 (projects . 7))
    ;; True if the home buffer should respond to resize events.
    dotspacemacs-startup-buffer-responsive t
@@ -298,14 +291,14 @@ values."
    ;; If set to `t' or `relative' line numbers are turned on in all `prog-mode' and
    ;; `text-mode' derivatives. If set to `relative', line numbers are relative.
    ;; This variable can also be set to a property list for finer control:
-   ;; '(:relative nil
-   ;;   :disabled-for-modes dired-mode
-   ;;                       doc-view-mode
-   ;;                       markdown-mode
-   ;;                       org-mode
-   ;;                       pdf-view-mode
-   ;;                       text-mode
-   ;;   :size-limit-kb 1000)
+   '(:relative nil
+     :disabled-for-modes dired-mode
+                         doc-view-mode
+                         markdown-mode
+                         org-mode
+                         pdf-view-mode
+                         text-mode
+     :size-limit-kb 1000)
    ;; (default nil)
    dotspacemacs-line-numbers t
    ;; Code folding method. Possible values are `evil' and `origami'.
@@ -356,7 +349,14 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (setq gofmt-command "goimports")
   '((spell-checking :variables spell-checking-enable-auto-dictionary nil))
   )
-
+(defun my-go-mode-hook ()
+                                        ; Call Gofmt before saving                                                    
+  (add-hook 'before-save-hook 'gofmt-before-save)
+                                        ; Godef jump key binding                                                      
+  (local-set-key (kbd "M-.") 'godef-jump)
+  (local-set-key (kbd "M-.") 'godef-jump)
+  (local-set-key (kbd "M-*") 'pop-tag-mark)
+  )
 (defun dotspacemacs/user-config ()
   (menu-bar-mode 1)
   
@@ -364,6 +364,9 @@ before packages are loaded. If you are unsure, you should try in setting them in
   undo-limit (* 10 1000 1000)                    ; 10MB per file
   undo-strong-limit (* 100 1000 1000)            ; 100MB ma
 
+  ;; Gomode autoimport
+  (setq gofmt-command "goimports")
+  (add-hook 'go-mode-hook 'my-go-mode-hook)
 
    ;; Persistent undo
    undo-tree-auto-save-history t
@@ -471,27 +474,27 @@ before packages are loaded. If you are unsure, you should try in setting them in
      '(tabbar-unselected-modified ((t (:inherit tabbar-selected-modified :background "#444")))))))
 
 ;; select and C-n for multi cursor ;; g r u for undo cursor 
-  ;; (use-package evil-mc
-  ;;   :ensure t
-  ;;   :config
-  ;;     (unless (= (line-number-at-pos) orig-line)
-  ;;   (global-evil-mc-mode  1)
-  ;;   (defun evil--mc-make-cursor-at-col (startcol _endcol orig-line)
-  ;;     (move-to-column startcol)
+  (use-package evil-mc
+    :ensure t
+    :config
+    (global-evil-mc-mode  1)
 
-  ;;       (evil-mc-make-cursor-here)))
-  ;;   (defun evil-mc-make-vertical-cursors (beg end)
-  ;;     (interactive (list (region-beginning) (region-end)))
-  ;;     (evil-mc-pause-cursors)
-  ;;     (apply-on-rectangle #'evil--mc-make-cursor-at-col
-  ;;                         beg end (line-number-at-pos (point)))
-  ;;     (evil-mc-resume-cursors)
-  ;;     (evil-normal-state)
-  ;;     (move-to-column (evil-mc-column-number (if (> end beg)
-  ;;                                                beg
-  ;;                                              end)))))  
+    (defun evil--mc-make-cursor-at-col (startcol _endcol orig-line)
+      (move-to-column startcol)
+      (unless (= (line-number-at-pos) orig-line)
+        (evil-mc-make-cursor-here)))
+    (defun evil-mc-make-vertical-cursors (beg end)
+      (interactive (list (region-beginning) (region-end)))
+      (evil-mc-pause-cursors)
+      (apply-on-rectangle #'evil--mc-make-cursor-at-col
+                          beg end (line-number-at-pos (point)))
+      (evil-mc-resume-cursors)
+      (evil-normal-state)
+      (move-to-column (evil-mc-column-number (if (> end beg)
+                                                 beg
+                                               end)))))  
 
-  (define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)
+  
   ;Allow cursor to go to top/bottom of screen
   (setq-default smooth-scroll-margin 1)
   "Configuration function for user code.
@@ -512,7 +515,7 @@ you should place your code here."
  '(compilation-message-face (quote default))
  '(custom-safe-themes
    (quote
-    ("9a155066ec746201156bb39f7518c1828a73d67742e11271e4f24b7b178c4710" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" "446cc97923e30dec43f10573ac085e384975d8a0c55159464ea6ef001f4a16ba" "c3d4af771cbe0501d5a865656802788a9a0ff9cf10a7df704ec8b8ef69017c68" "87d46d0ad89557c616d04bef34afd191234992c4eb955ff3c60c6aa3afc2e5cc" "7a2ac0611ded83cdd60fc4de55ba57d36600eae261f55a551b380606345ee922" "a61109d38200252de49997a49d84045c726fa8d0f4dd637fce0b8affaa5c8620" "c614d2423075491e6b7f38a4b7ea1c68f31764b9b815e35c9741e9490119efc0" "760ce657e710a77bcf6df51d97e51aae2ee7db1fba21bbad07aab0fa0f42f834" "36746ad57649893434c443567cb3831828df33232a7790d232df6f5908263692" "808b47c5c5583b5e439d8532da736b5e6b0552f6e89f8dafaab5631aace601dd" "4bf5c18667c48f2979ead0f0bdaaa12c2b52014a6abaa38558a207a65caeb8ad" "aea30125ef2e48831f46695418677b9d676c3babf43959c8e978c0ad672a7329" "c9f102cf31165896631747fd20a0ca0b9c64ecae019ce5c2786713a5b7d6315e" "ef04dd1e33f7cbd5aa3187981b18652b8d5ac9e680997b45dc5d00443e6a46e3" "25c242b3c808f38b0389879b9cba325fb1fa81a0a5e61ac7cae8da9a32e2811b" "f0c98535db38af17e81e491a77251e198241346306a90c25eb982b57e687d7c0" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "350dc341799fbbb81e59d1e6fff2b2c8772d7000e352a5c070aa4317127eee94" "196df8815910c1a3422b5f7c1f45a72edfa851f6a1d672b7b727d9551bb7c7ba" "a62f0662e6aa7b05d0b4493a8e245ab31492765561b08192df61c9d1c7e1ddee" "ec3e6185729e1a22d4af9163a689643b168e1597f114e1cec31bdb1ab05aa539" "732ccca2e9170bcfd4ee5070159923f0c811e52b019106b1fc5eaa043dff4030" "b67b2279fa90e4098aa126d8356931c7a76921001ddff0a8d4a0541080dee5f6" "cabc32838ccceea97404f6fcb7ce791c6e38491fd19baa0fcfb336dcc5f6e23c" "dd4628d6c2d1f84ad7908c859797b24cc6239dfe7d71b3363ccdd2b88963f336" "34ed3e2fa4a1cb2ce7400c7f1a6c8f12931d8021435bad841fdc1192bd1cc7da" "b3bcf1b12ef2a7606c7697d71b934ca0bdd495d52f901e73ce008c4c9825a3aa" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "12b204c8fcce23885ce58e1031a137c5a14461c6c7e1db81998222f8908006af" default)))
+    ("ef04dd1e33f7cbd5aa3187981b18652b8d5ac9e680997b45dc5d00443e6a46e3" "25c242b3c808f38b0389879b9cba325fb1fa81a0a5e61ac7cae8da9a32e2811b" "f0c98535db38af17e81e491a77251e198241346306a90c25eb982b57e687d7c0" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "350dc341799fbbb81e59d1e6fff2b2c8772d7000e352a5c070aa4317127eee94" "196df8815910c1a3422b5f7c1f45a72edfa851f6a1d672b7b727d9551bb7c7ba" "a62f0662e6aa7b05d0b4493a8e245ab31492765561b08192df61c9d1c7e1ddee" "ec3e6185729e1a22d4af9163a689643b168e1597f114e1cec31bdb1ab05aa539" "732ccca2e9170bcfd4ee5070159923f0c811e52b019106b1fc5eaa043dff4030" "b67b2279fa90e4098aa126d8356931c7a76921001ddff0a8d4a0541080dee5f6" "cabc32838ccceea97404f6fcb7ce791c6e38491fd19baa0fcfb336dcc5f6e23c" "dd4628d6c2d1f84ad7908c859797b24cc6239dfe7d71b3363ccdd2b88963f336" "34ed3e2fa4a1cb2ce7400c7f1a6c8f12931d8021435bad841fdc1192bd1cc7da" "b3bcf1b12ef2a7606c7697d71b934ca0bdd495d52f901e73ce008c4c9825a3aa" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "12b204c8fcce23885ce58e1031a137c5a14461c6c7e1db81998222f8908006af" default)))
  '(evil-want-Y-yank-to-eol nil)
  '(fci-rule-color "#3C3D37" t)
  '(global-ede-mode t)
@@ -530,37 +533,12 @@ you should place your code here."
  '(magit-diff-use-overlays nil)
  '(package-selected-packages
    (quote
-    (tabbar-ruler multiple-cursors leuven-theme back-button zoom typing-game powerline test-simple loc-changes load-relative spinner hydra parent-mode projectile pkg-info epl flx let-alist smartparens iedit anzu evil goto-chg undo-tree highlight bind-map bind-key packed f dash s helm avy helm-core async popup elmacro all-the-icons-dired go-tag go kubernetes-evil side-notes nerdtab go-dlv realgud csv-mode ox-twbs ox-reveal ox-gfm dockerfile-mode docker json-mode tablist docker-tramp json-snatcher json-reformat pandoc-mode ox-pandoc ht emoji-cheat-sheet-plus company-emoji yasnippet-snippets quickrun monokai-theme base16-theme all-the-icons memoize helm-gtags ggtags company-quickhelp rainbow-mode rainbow-identifiers flyspell-popup color-identifiers-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc helm-company cython-mode company-statistics company-go company-c-headers company-anaconda anaconda-mode pythonic xterm-color unfill smeargle shell-pop orgit org-category-capture org-present org-pomo doro alert log4e gntp org-mime org-download mwim multi-term mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore helm-c-yasnippet go-guru go-eldoc go-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub with-editor eshell-z eshell-prompt-extras esh-help disaster diff-hl company cmake-mode clang-format auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line)))
- '(pos-tip-background-color "#FFFACE")
- '(pos-tip-foreground-color "#272822")
- '(vc-annotate-background nil)
- '(vc-annotate-color-map
-   (quote
-    ((20 . "#F92672")
-     (40 . "#CF4F1F")
-     (60 . "#C26C0F")
-     (80 . "#E6DB74")
-     (100 . "#AB8C00")
-     (120 . "#A18F00")
-     (140 . "#989200")
-     (160 . "#8E9500")
-     (180 . "#A6E22E")
-     (200 . "#729A1E")
-     (220 . "#609C3C")
-     (240 . "#4E9D5B")
-     (260 . "#3C9F79")
-     (280 . "#A1EFE4")
-     (300 . "#299BA6")
-     (320 . "#2896B5")
-     (340 . "#2790C3")
-     (360 . "#66D9EF"))))
- '(vc-annotate-very-old-color nil)
- '(weechat-color-list
-   (quote
-    (unspecified "#272822" "#3C3D37" "#F70057" "#F92672" "#86C30D" "#A6E22E" "#BEB244" "#E6DB74" "#40CAE4" "#66D9EF" "#FB35EA" "#FD5FF0" "#74DBCD" "#A1EFE4" "#F8F8F2" "#F8F8F0"))))
+    (realgud test-simple loc-changes load-relative all-the-icons-dired tabbar-ruler multiple-cursors csv-mode ox-twbs ox-reveal ox-gfm dockerfile-mode docker json-mode tablist docker-tramp json-snatcher json-reformat pandoc-mode ox-pandoc ht emoji-cheat-sheet-plus company-emoji yasnippet-snippets quickrun monokai-theme base16-theme all-the-icons memoize helm-gtags ggtags company-quickhelp rainbow-mode rainbow-identifiers flyspell-popup color-identifiers-mode web-mode tagedit slim-mode scss-mode sass-mode pug-mode less-css-mode helm-css-scss haml-mode emmet-mode company-web web-completion-data yapfify pyvenv pytest pyenv-mode py-isort pip-requirements live-py-mode hy-mode dash-functional helm-pydoc helm-company cython-mode company-statistics company-go company-c-headers company-anaconda anaconda-mode pythonic xterm-color unfill smeargle shell-pop orgit org-projectile org-category-capture org-present org-pomodoro alert log4e gntp org-mime org-download mwim multi-term mmm-mode markdown-toc markdown-mode magit-gitflow htmlize helm-gitignore helm-c-yasnippet go-guru go-eldoc go-mode gnuplot gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter gh-md fuzzy flyspell-correct-helm flyspell-correct flycheck-pos-tip pos-tip flycheck evil-magit magit magit-popup git-commit ghub with-editor eshell-z eshell-prompt-extras esh-help disaster diff-hl company cmake-mode clang-format auto-yasnippet yasnippet auto-dictionary ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hungry-delete hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu elisp-slime-nav dumb-jump diminish define-word column-enforce-mode clean-aindent-mode auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((((class color) (min-colors 257)) (:foreground "#F8F8F2" :background "#272822")) (((class color) (min-colors 89)) (:foreground "#F5F5F5" :background "#1B1E1C")))))
+ )
+
+
