@@ -78,6 +78,9 @@ go_packages(){
         go get github.com/jstemmer/gotags
         go get github.com/nsf/gocode
         go get github.com/rogpeppe/godef
+
+        #gotest 
+        go get -u github.com/cweill/gotests/...
     )
     
 }
