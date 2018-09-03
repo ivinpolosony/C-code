@@ -1,0 +1,14 @@
+* Variable 
+** When you say int64 ==> word sizes are 64 , addresses are 64
+** Zero value --> var a int ---> all zeros --> string would have empty  
+** Casting 
+*** No casting in Go it has conversion --> has extra cost of allocation. 
+* Struct 
+  #+BEGIN_SRC go
+   struct data{
+    a bool,  // 1 byte 
+    a int16, // 2 bytes  
+    a float32 , // 4 bytes
+   }
+  #+END_SRC
+    
