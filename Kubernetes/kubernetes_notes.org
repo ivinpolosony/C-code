@@ -1,0 +1,5 @@
+* Pod 
+** One ip per pod --< >Use different ports if you want to run side car containers
+** shares same cgroup ip namespaces etc.
+** Intra-pod communication is done using localhost 
+** Pod is never up partially --> side car down others up
