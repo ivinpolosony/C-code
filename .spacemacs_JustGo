@@ -31,13 +31,7 @@ values."
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
    '(
-     markdown
      javascript
-     ;; ----------------------------------------------------------------
-     ;; Example of useful layers you may want to use right away.
-     ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
-     ;; <M-m f e R> (Emacs style) to install them.
-     ;; ----------------------------------------------------------------
      helm
      (auto-completion :variables
                       auto-completion-return-key-behavior 'complete
@@ -54,13 +48,14 @@ values."
      better-defaults
      emacs-lisp
      git
-     ;; markdown
-     ;; org
+     markdown
+     org
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
      ;; spell-checking
      syntax-checking
+     imenu-list
      ;; version-control
      )
    ;; List of additional packages that will be installed without being
@@ -69,8 +64,10 @@ values."
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(
                                      go-dlv
+                                     go-guru
                                      go-add-tags
                                      go-gen-test
+                                     go-snippets
                                      go-errcheck
                                      monokai-theme
                                      quickrun
@@ -148,13 +145,14 @@ values."
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
                          monokai
+                         spacemacs-light
                          spacemacs-dark
-                         spacemacs-light)
+                         )
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
+   dotspacemacs-default-font '("Sauce Code Pro Nerd Font"
                                :size 13
                                :weight normal
                                :width normal
@@ -364,7 +362,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (define-key evil-normal-state-map (kbd "K") 'evil-scroll-line-down)
   (setq-default evil-scroll-line-count 3)
 
-  (define-key evil-normal-state-map (kbd "<C-f12>") 'imenu)
+  (define-key evil-normal-state-map (kbd "<C-f12>") 'imenu-list-smart-toggle)
   ;; Moving text
   (use-package move-text
     :defer t :ensure t
@@ -384,7 +382,6 @@ before packages are loaded. If you are unsure, you should try in setting them in
   ;; Org mode setup
   (setq org-todo-keywords
         '((sequence "TODO(t)" "WORKING(w)" "|" "DONE(d)")))
-
 
   (evil-define-key 'normal go-mode-map (kbd "g d") 'go-guru-definition)
   (evil-define-key 'normal go-mode-map (kbd "<S-f6>") 'go-rename)
@@ -407,7 +404,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
  '(evil-want-Y-yank-to-eol nil)
  '(package-selected-packages
    (quote
-    (mmm-mode markdown-toc markdown-mode gh-md web-beautify livid-mode skewer-mode simple-httpd json-mode json-snatcher json-reformat js2-refactor multiple-cursors js2-mode js-doc company-tern dash-functional tern coffee-mode go-add-tags flycheck-pos-tip flycheck-gometalinter flycheck gotest go-errcheck dockerfile-mode yasnippet-snippets monokai-theme go-gen-test company-quickhelp pos-tip quickrun go-dlv xterm-color unfill smeargle shell-pop orgit mwim multi-term magit-gitflow helm-gitignore helm-company helm-c-yasnippet go-guru go-eldoc gitignore-mode gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link fuzzy evil-magit magit magit-popup git-commit ghub let-alist with-editor eshell-z eshell-prompt-extras esh-help company-statistics company-go go-mode company auto-yasnippet yasnippet ac-ispell auto-complete ws-butler winum which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode pcre2el paradox spinner org-plus-contrib org-bullets open-junk-file neotree move-text macrostep lorem-ipsum linum-relative link-hint indent-guide hydra hungry-delete hl-todo highlight-parentheses highlight-numbers parent-mode highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make projectile pkg-info epl helm-flx helm-descbinds helm-ag google-translate golden-ratio flx-ido flx fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state smartparens evil-indent-plus evil-iedit-state iedit evil-exchange evil-escape evil-ediff evil-args evil-anzu anzu evil goto-chg undo-tree eval-sexp-fu highlight elisp-slime-nav dumb-jump f dash s diminish define-word column-enforce-mode clean-aindent-mode bind-map bind-key auto-highlight-symbol auto-compile packed aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line helm avy helm-core popup async))))
+    (imenu-list xterm-color ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org spaceline smeargle shell-pop restart-emacs rainbow-delimiters quickrun popwin persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file neotree mwim multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio go-snippets go-guru go-gen-test go-errcheck go-eldoc go-dlv go-add-tags gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flycheck-pos-tip flycheck-gometalinter flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav dumb-jump diminish define-word company-tern company-statistics company-quickhelp company-go column-enforce-mode coffee-mode clean-aindent-mode auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
