@@ -50,6 +50,10 @@ values."
      git
      markdown
      org
+     (version-control :variables
+                      version-control-diff-tool 'diff-hl
+                      version-control-diff-side 'left
+                      version-control-global-margin 't)
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
@@ -367,7 +371,13 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (define-key evil-normal-state-map (kbd "K") 'evil-scroll-line-down)
   (setq-default evil-scroll-line-count 3)
 
-  (define-key evil-normal-state-map (kbd "<C-f12>") 'imenu-list-smart-toggle)
+  (define-key evil-normal-state-map (kbd "M-1") 'neotree-toggle)
+  (define-key evil-normal-state-map (kbd "M-2") 'imenu-list-smart-toggle)
+  (define-key evil-normal-state-map (kbd "<C-f12>") 'spacemacs/helm-jump-in-buffer)
+
+  (diff-hl-flydiff-mode '(:global t))
+
+
   ;; Moving text
   (use-package move-text
     :defer t :ensure t
@@ -412,7 +422,9 @@ before packages are loaded. If you are unsure, you should try in setting them in
    (quote
     ("8c49bff70df5da50a5ccd3a6d9f1d4aaccd8b622a749099561e7bdc4d7b975c4" "f40a88e6dd9f7e0847a550ed2b5c1e27e940e77ff71b15b2874b81828ab14869" "59fc29518e698ca6da046525a0f3cd79d3f3e26ffd1500818ab9edc5b841d657" "d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879")))
  '(evil-want-Y-yank-to-eol nil)
- '(package-selected-packages nil))
+ '(package-selected-packages
+   (quote
+    (git-gutter-fringe+ git-gutter-fringe fringe-helper git-gutter+ git-gutter diff-hl xterm-color ws-butler winum which-key web-beautify volatile-highlights vi-tilde-fringe uuidgen use-package unfill toc-org spaceline solarized-theme smeargle shell-pop restart-emacs rainbow-delimiters quickrun popwin persp-mode pcre2el paradox orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets open-junk-file neotree mwim multi-term move-text monokai-theme mmm-mode markdown-toc magit-gitflow macrostep lorem-ipsum livid-mode linum-relative link-hint json-mode js2-refactor js-doc indent-guide imenu-list hungry-delete htmlize hl-todo highlight-parentheses highlight-numbers highlight-indentation helm-themes helm-swoop helm-projectile helm-mode-manager helm-make helm-gitignore helm-flx helm-descbinds helm-company helm-c-yasnippet helm-ag google-translate golden-ratio go-snippets go-guru go-gen-test go-errcheck go-eldoc go-dlv go-add-tags gnuplot gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link gh-md fuzzy flycheck-pos-tip flycheck-gometalinter flx-ido fill-column-indicator fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-search-highlight-persist evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-magit evil-lisp-state evil-indent-plus evil-iedit-state evil-exchange evil-escape evil-ediff evil-args evil-anzu eval-sexp-fu eshell-z eshell-prompt-extras esh-help elisp-slime-nav dumb-jump diminish define-word company-tern company-statistics company-quickhelp company-go column-enforce-mode color-theme-solarized coffee-mode clean-aindent-mode auto-yasnippet auto-highlight-symbol auto-compile aggressive-indent adaptive-wrap ace-window ace-link ace-jump-helm-line ac-ispell))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
