@@ -149,8 +149,8 @@ values."
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
-                         solarized-dark
                          monokai
+                         solarized-dark
                          spacemacs-light
                          spacemacs-dark
                          )
@@ -377,7 +377,7 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   (diff-hl-flydiff-mode '(:global t))
 
-
+  (spacemacs/toggle-automatic-symbol-highlight-on) 
   ;; Moving text
   (use-package move-text
     :defer t :ensure t
