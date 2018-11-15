@@ -30,7 +30,7 @@ values."
    dotspacemacs-configuration-layer-path '()
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(
+   '(yaml
      javascript
      helm
      (auto-completion :variables
@@ -73,6 +73,8 @@ values."
                                      go-gen-test
                                      go-snippets
                                      go-errcheck
+                                     dockerfile-mode
+                                     molokai-theme
                                      monokai-theme
                                      color-theme-solarized
                                      quickrun
@@ -149,6 +151,7 @@ values."
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
+                         molokai
                          monokai
                          solarized-dark
                          spacemacs-light
@@ -237,7 +240,7 @@ values."
    dotspacemacs-enable-paste-transient-state nil
    ;; Which-key delay in seconds. The which-key buffer is the popup listing
    ;; the commands bound to the current keystroke sequence. (default 0.4)
-   dotspacemacs-which-key-delay 0.4
+   dotspacemacs-which-key-delay 0.8
    ;; Which-key frame position. Possible values are `right', `bottom' and
    ;; `right-then-bottom'. right-then-bottom tries to display the frame to the
    ;; right; if there is insufficient space it displays it at the bottom.
@@ -364,8 +367,8 @@ before packages are loaded. If you are unsure, you should try in setting them in
 
   ; Both needed because  is overwritten by default in normal state
   (define-key evil-motion-state-map (kbd "J") 'evil-scroll-line-up)
-  (define-key evil-normal-state-map (kbd "C-k") 'evil-forward-paragraph)
-  (define-key evil-normal-state-map (kbd "C-j") 'evil-backward-paragraph)
+  (define-key evil-normal-state-map (kbd "C-j") 'evil-forward-paragraph)
+  (define-key evil-normal-state-map (kbd "C-k") 'evil-backward-paragraph)
   (define-key evil-normal-state-map (kbd "J") 'evil-scroll-line-up)
   (define-key evil-motion-state-map (kbd "K") 'evil-scroll-line-down)
   (define-key evil-normal-state-map (kbd "K") 'evil-scroll-line-down)
