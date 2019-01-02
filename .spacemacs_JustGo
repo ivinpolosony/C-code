@@ -77,6 +77,7 @@ values."
                                      molokai-theme
                                      monokai-theme
                                      color-theme-solarized
+                                     right-click-context
                                      quickrun
                                       )
    ;; A list of packages that cannot be updated.
@@ -377,6 +378,13 @@ before packages are loaded. If you are unsure, you should try in setting them in
   (define-key evil-normal-state-map (kbd "M-1") 'neotree-toggle)
   (define-key evil-normal-state-map (kbd "M-2") 'imenu-list-smart-toggle)
   (define-key evil-normal-state-map (kbd "<C-f12>") 'spacemacs/helm-jump-in-buffer)
+  (define-key evil-normal-state-map (kbd "<C-tab>") 'other-window)
+
+  (right-click-context-mode 1)
+
+  ;; If want to use context menu by keyboard
+  ;;(define-key right-click-context-mode-map (kbd "C-c :") 'right-click-context-menu)
+
 
   (diff-hl-flydiff-mode '(:global t))
 
