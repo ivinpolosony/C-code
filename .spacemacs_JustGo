@@ -352,7 +352,13 @@ before packages are loaded. If you are unsure, you should try in setting them in
   ;; Windows commands
   (global-set-key
    (kbd "M-d") 'spacemacs/delete-window)
-
+  ;; Use this parameter as C++ default
+  (quickrun-add-command "c++/c1z"
+    '((:command . "g++")
+      (:exec    . ("%c -std=c++1z %o -o %e %s"
+		  "%e %a"))
+      (:remove  . ("%e")))
+            :default "c++") 
   (global-set-key (kbd "<f8>") 'quickrun)
   (global-set-key (kbd "M-r") 'quickrun)
  ;;; BEGIN: Mouse Support
