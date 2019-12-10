@@ -45,6 +45,11 @@ values."
          go-use-gometalinter t
          gofmt-command "goimports"
      )
+    (c-c++ :variables
+            flycheck-gcc-language-standard "c++14"
+            flycheck-clang-language-standard "c++14"
+     )
+
      better-defaults
      emacs-lisp
      git
@@ -423,6 +428,15 @@ before packages are loaded. If you are unsure, you should try in setting them in
 (setq ns-use-srgb-colorspace nil)
 ;; (setq powerline-default-separator 'utf-8)
 (delete-selection-mode 1)
+
+;; Use this parameter as C++ default
+(quickrun-add-command "c++/c1z"
+  '((:command . "g++")
+    (:exec    . ("%c -std=c++1z %o -o %e %s"
+                 "%e %a"))
+    (:remove  . ("%e")))
+  :default "c++")
+)
 
 )
 
