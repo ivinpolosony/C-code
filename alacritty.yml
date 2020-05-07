@@ -629,6 +629,10 @@ key_bindings:
   - { key: Home,      mods: Shift,   mode: ~Alt, action: ScrollToTop,   }
   - { key: End,       mods: Shift,   mode: ~Alt, action: ScrollToBottom }
   - { key: Q, mods: Control, chars: "\x11" }
+#  - { key: [ALPHA_KEY],        mods: Alt,     chars: "\x1b[ALPHA_KEY]"                       }
+  - { key: R,        mods: Alt,     chars: "\x1br"                       }
+
+
 
 
   # Vi Mode
